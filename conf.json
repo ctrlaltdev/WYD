@@ -1,0 +1,8 @@
+{
+  "app":{
+    "author": "Yorick Demichelis",
+    "name": "What you doin'?",
+    "url": "https://localhost",
+    "secure": true
+  }
+}
