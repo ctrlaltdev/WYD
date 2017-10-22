@@ -63,7 +63,9 @@ app.disable('x-powered-by');
 
 // Routes
 var index = require('./routes/index');
+var tasks = require('./routes/tasks');
 app.use('/', index);
+app.use('/tasks', tasks);
 
 // Errors
 app.use(function(req, res, next) {
