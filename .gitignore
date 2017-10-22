@@ -1,6 +1,10 @@
 # RethinkDB
 rethinkdb_data
 
+# JSDoc
+out
+documentation
+
 # Logs
 logs
 *.log

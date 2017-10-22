@@ -28,5 +28,8 @@
     "path": "^0.12.7",
     "pug": "^2.0.0-rc.4",
     "rethinkdbdash": "^2.3.31"
+  },
+  "devDependencies": {
+    "jsdoc": "^3.5.5"
   }
 }
