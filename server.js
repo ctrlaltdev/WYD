@@ -9,6 +9,18 @@ var http = require('http');
 var log4js = require("log4js");
 var morgan = require('morgan');
 var path = require('path');
+var r = require('rethinkdbdash')({
+  servers:[
+    {
+      host: conf.database.host,
+      port: conf.database.port,
+      user: conf.database.user,
+      password: conf.database.password,
+      db: conf.database.database
+    }
+  ],
+  silent: true
+});
 var sass = require('node-sass-middleware');
 
 // Server
