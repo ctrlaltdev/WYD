@@ -1,4 +1,4 @@
-[![Issues](https://img.shields.io/github/issues/implose/WYD.svg?style=flat-square)](https://github.com/implose/WYD/issues)
+[![Issues](https://img.shields.io/github/issues/ctrlaltdelins/WYD.svg?style=flat-square)](https://github.com/ctrlaltdelins/WYD/issues)
 [![I love badges](https://img.shields.io/badge/I%20love-badges-FF00FF.svg?style=flat-square)](https://shields.io)
 
 # What you doin'?
@@ -10,7 +10,7 @@
 * Rethinkdb 2.3.6+
 
 ### How to install
-* Clone this repo: ```git clone https://github.com/implose/WYD.git```
+* Clone this repo: ```git clone https://github.com/ctrlaltdelins/WYD.git```
 * Move inside the directory: ```cd WYD```
 * Install the npm packages: ```npm i``` or ```yarn install```
 * Customize the config.json file - note that you have to create the rethinkdb database on your own, you just have to reference the name here.

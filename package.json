@@ -1,13 +1,13 @@
 {
   "name": "what-you-doin",
   "version": "1.0.0",
-  "author": "Yorick <yorick@implo.se>",
+  "author": "Yorick <yorick@ctrlaltdelins.xyz>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/implose/WYD.git"
+    "url": "https://github.com/ctrlaltdelins/WYD.git"
   },
   "bugs": {
-    "url": "https://github.com/implose/WYD/issues"
+    "url": "https://github.com/ctrlaltdelins/WYD/issues"
   },
   "main": "server.js",
   "scripts": {
