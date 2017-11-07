@@ -1,20 +1,20 @@
 {
   "name": "what-you-doin",
   "version": "1.0.0",
-  "author": "Yorick <yorick@ctrlaltdelins.xyz>",
+  "author": "Yorick <yorick@ctrlaltdev.xyz>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ctrlaltdelins/WYD.git"
+    "url": "https://github.com/ctrlaltdev/WYD.git"
   },
   "bugs": {
-    "url": "https://github.com/ctrlaltdelins/WYD/issues"
+    "url": "https://github.com/ctrlaltdev/WYD/issues"
   },
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "test": "node_modules/.bin/mocha test"
   },
-  "license": "Beerware",
+  "license": "MPL",
   "dependencies": {
     "body-parser": "^1.18.2",
     "connect-flash": "^0.1.1",
