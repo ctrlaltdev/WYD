@@ -4,12 +4,5 @@
     "name": "What you doin'?",
     "url": "https://localhost",
     "secure": true
-  },
-  "database":{
-    "host": "localhost",
-    "port": "28015",
-    "database": "WYD",
-    "user": "admin",
-    "password": ""
   }
 }
