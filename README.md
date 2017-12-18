@@ -6,18 +6,13 @@
 ## Installation
 
 ### Requirements
-* Node.js 8.4+
-* Rethinkdb 2.3.6+
+* Node.js 8.9+
 
 ### How to install
 * Clone this repo: ```git clone https://github.com/ctrlaltdev/WYD.git```
 * Move inside the directory: ```cd WYD```
 * Install the npm packages: ```npm i``` or ```yarn install```
-* Customize the config.json file - note that you have to create the rethinkdb database on your own, you just have to reference the name here.
-* Customize the pm2.json file if you're going to use pm2, if not, note that the app with be accessible on the default port: 1337 and logging will be set to production mode.
-* Customize the sass/_config.sass
-* Start the server: ```npm start``` or ```node server.js```
-* Go to http://localhost:1337/
+* Do stuff
 * Pet a cat
 * Enjoy life
 
