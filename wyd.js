@@ -3,9 +3,10 @@ var fs = require('fs');
 var argv = require('minimist')(process.argv.slice(2));
 var cmd = (argv._[0]) ? argv._[0] : false;
 var sqlite3 = require('sqlite3').verbose();
+var intel = require('intel');
 var confExist = fs.existsSync('./.conf.json');
 if (!confExist) {
-  console.warn(`
+  intel.warn(`
   Your conf file is not set up.
 
   REMOTE:
@@ -14,10 +15,19 @@ if (!confExist) {
 
   LOCAL:
     To set up a local install:  wyd set --local
+
+  LOGGING:
+    To make wyd more verbal:    wyd set --dev
   `);
   var conf = null;
+  intel.setLevel(intel.WARN);
 } else {
   var conf = require('./.conf.json');
+  if (conf.dev) {
+    intel.setLevel(intel.TRACE);
+  } else {
+    intel.setLevel(intel.WARN);
+  }
 }
 
 class DBConnect {
@@ -26,12 +36,12 @@ class DBConnect {
     if (conf.local) {
       this.db = new sqlite3.Database('./.WYD.db', (err) => {
         if (err) {
-          console.warn(err.message);
+          intel.warn(err.message);
         }
-        console.log('Local DB');
+        intel.info('Local DB');
       });
     } else {
-      console.log('Remote DB')
+      intel.info('Remote DB')
     }
   }
 
@@ -41,31 +51,31 @@ class DBConnect {
         if (err) {
           console.error(err.message);
         }
-        console.log('Local DB closed');
+        intel.info('Local DB closed');
       });
     } else {
-      console.log('Remote DB closed');
+      intel.info('Remote DB closed');
     }
   }
 
   close (id) {
-
+    this.deconstructor();
   }
 
   create (task) {
-
+    this.deconstructor();
   }
 
   delete (id) {
-
+    this.deconstructor();
   }
 
   list () {
-
+    this.deconstructor();
   }
 
   update (id, task) {
-
+    this.deconstructor();
   }
 
 }
@@ -75,62 +85,81 @@ if (cmd && cmd == "set") {
   if (argv.url) {
     if (confExist) {
       try {
-        let newconf = fs.readFileSync("./.conf.json", "utf8");
+        let newconf = JSON.parse(fs.readFileSync("./.conf.json", "utf8"));
         newconf.url = argv.url;
         fs.writeFileSync("./.conf.json", JSON.stringify(newconf));
-        console.log('Url set to:',argv.url);
+        intel.info('Url set to:',argv.url);
       } catch (err) {
-        console.warn(err);
+        intel.warn(err);
       }
     } else {
       try {
         let newconf = {url: argv.url};
         fs.writeFileSync("./.conf.json", JSON.stringify(newconf));
-        console.log('Url set to:',argv.url);
+        intel.info('Url set to:',argv.url);
       } catch (err) {
-        console.warn(err);
+        intel.warn(err);
       }
     }
   } else if (argv.user) {
     if (confExist) {
       try {
-        let newconf = fs.readFileSync("./.conf.json", "utf8");
+        let newconf = JSON.parse(fs.readFileSync("./.conf.json", "utf8"));
         newconf.user = argv.user;
         fs.writeFileSync("./.conf.json", JSON.stringify(newconf));
-        console.log('User set to:',argv.user);
+        intel.info('User set to:',argv.user);
       } catch (err) {
-        console.warn(err);
+        intel.warn(err);
       }
     } else {
       try {
         let newconf = {user: argv.user};
         fs.writeFileSync("./.conf.json", JSON.stringify(newconf));
-        console.log('User set to:',argv.user);
+        intel.info('User set to:',argv.user);
       } catch (err) {
-        console.warn(err);
+        intel.warn(err);
       }
     }
   } else if (argv.local) {
     if (confExist) {
       try {
-        let newconf = fs.readFileSync("./.conf.json", "utf8");
+        let newconf = JSON.parse(fs.readFileSync("./.conf.json", "utf8"));
         newconf.local = true;
         fs.writeFileSync("./.conf.json", JSON.stringify(newconf));
-        console.log('Installation set to local');
+        intel.info('Installation set to local');
       } catch (err) {
-        console.warn(err);
+        intel.warn(err);
       }
     } else {
       try {
         let newconf = {local: true};
         fs.writeFileSync("./.conf.json", JSON.stringify(newconf));
-        console.log('Installation set to local');
+        intel.info('Installation set to local');
       } catch (err) {
-        console.warn(err);
+        intel.warn(err);
+      }
+    }
+  } else if (argv.dev) {
+    if (confExist) {
+      try {
+        let newconf = JSON.parse(fs.readFileSync("./.conf.json", "utf8"));
+        newconf.dev = true;
+        fs.writeFileSync("./.conf.json", JSON.stringify(newconf));
+        intel.info('Installation set to dev');
+      } catch (err) {
+        intel.warn(err);
+      }
+    } else {
+      try {
+        let newconf = {dev: true};
+        fs.writeFileSync("./.conf.json", JSON.stringify(newconf));
+        intel.info('Installation set to dev');
+      } catch (err) {
+        intel.warn(err);
       }
     }
   } else {
-    console.warn(`
+    intel.warn(`
   The option has not been recognized, consult the help to check allowed options for the command set.
     `);
   }
@@ -144,31 +173,31 @@ if (cmd && confExist) {
 
     case "done":
     case "close":
-      console.log('DONE');
+      DBC.close(argv._[1]);
       break;
 
     case "new":
     case "create":
-      console.log('NEW');
+      DBC.create(argv._[1]);
       break;
 
     case "delete":
     case "del":
     case "rm":
-      console.log('DELETE');
+      DBC.delete(argv._[1]);
       break;
 
     case "list":
     case "ls":
-      console.log('LIST');
+      DBC.list();
       break;
 
     case "update":
-      console.log('UPDATE');
+      DBC.update(argv._[1], argv._[2]);
       break;
 
     default:
-      console.warn(`
+      intel.warn(`
       This command is not recognized, maybe there's a typo?
       Do not hesitate to check wyd -h
       `);
@@ -178,7 +207,7 @@ if (cmd && confExist) {
 
 } else {
   if (argv.h) {
-    console.log(`
+    intel.info(`
       WYD is CLI client for a What You Doin server.
       You can check below the availables commands and options.
 
@@ -202,10 +231,10 @@ if (cmd && confExist) {
       COMMANDS DETAILS:
       
         DELETE:
-          e.g.:     wyd delete #76
+          e.g.:     wyd delete 76
 
         DONE:
-          e.g.:     wyd done #431
+          e.g.:     wyd done 431
 
         LIST:
           e.g.:     wyd list
@@ -214,7 +243,7 @@ if (cmd && confExist) {
           e.g.:     wyd new "Pet the cat"
 
         UPDATE:
-          e.g.:     wyd update #42 "Pet my cat"
+          e.g.:     wyd update 42 "Pet my cat"
     `);
   }
 }
