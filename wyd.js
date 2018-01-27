@@ -2,8 +2,8 @@
 var fs = require('fs');
 var argv = require('minimist')(process.argv.slice(2));
 var cmd = (argv._[0]) ? argv._[0] : false;
+var sqlite3 = require('sqlite3').verbose();
 var confExist = fs.existsSync('./.conf.json');
-
 if (!confExist) {
   console.warn(`
   Your conf file is not set up.
@@ -15,23 +15,59 @@ if (!confExist) {
   LOCAL:
     To set up a local install:  wyd set --local
   `);
+  var conf = null;
 } else {
   var conf = require('./.conf.json');
-  if (conf.local) {
-    const sqlite3 = require('sqlite3').verbose();
-    let db = new sqlite3.Database('./.WYD.db', (err) => {
-      if (err) {
-        console.warn(err.message);
-      }
-      console.log('Connected to the database.');
-    });
-    db.close((err) => {
-      if (err) {
-        console.error(err.message);
-      }
-      console.log('Close the database connection.');
-    });
+}
+
+class DBConnect {
+
+  constructor () {
+    if (conf.local) {
+      this.db = new sqlite3.Database('./.WYD.db', (err) => {
+        if (err) {
+          console.warn(err.message);
+        }
+        console.log('Local DB');
+      });
+    } else {
+      console.log('Remote DB')
+    }
   }
+
+  deconstructor () {
+    if (conf.local) {
+      this.db.close((err) => {
+        if (err) {
+          console.error(err.message);
+        }
+        console.log('Local DB closed');
+      });
+    } else {
+      console.log('Remote DB closed');
+    }
+  }
+
+  close (id) {
+
+  }
+
+  create (task) {
+
+  }
+
+  delete (id) {
+
+  }
+
+  list () {
+
+  }
+
+  update (id, task) {
+
+  }
+
 }
 
 if (cmd && cmd == "set") {
@@ -102,6 +138,7 @@ if (cmd && cmd == "set") {
 }
 
 if (cmd && confExist) {
+  var DBC = new DBConnect();
 
   switch (cmd) {
 
