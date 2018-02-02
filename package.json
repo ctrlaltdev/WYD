@@ -1,6 +1,6 @@
 {
   "name": "what-you-doin",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": "Yorick <yorick@ctrlaltdev.xyz>",
   "preferGlobal": true,
   "bin": "./wyd.js",
