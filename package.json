@@ -3,7 +3,7 @@
   "version": "1.0.2",
   "author": "Yorick <yorick@ctrlaltdev.xyz>",
   "preferGlobal": true,
-  "bin":"./wyd.js",
+  "bin": "./wyd.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/ctrlaltdev/WYD.git"
@@ -18,11 +18,11 @@
   "license": "MPL-2.0",
   "dependencies": {
     "intel": "^1.2.0",
-    "minimist": "^1.2.0"
+    "minimist": "^1.2.0",
+    "sqlite3": "^3.1.13"
   },
   "devDependencies": {
-    "jsdoc": "^3.5.5",
-    "sqlite3": "^3.1.13"
+    "jsdoc": "^3.5.5"
   },
   "keywords": [
     "task",
