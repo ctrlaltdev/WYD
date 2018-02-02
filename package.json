@@ -1,8 +1,9 @@
 {
   "name": "what-you-doin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Yorick <yorick@ctrlaltdev.xyz>",
   "preferGlobal": true,
+  "bin":"./wyd.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/ctrlaltdev/WYD.git"
@@ -12,7 +13,7 @@
   },
   "main": "wyd.js",
   "scripts": {
-    "install local": "node local.js"
+    "start": "node wyd.js"
   },
   "license": "MPL-2.0",
   "dependencies": {
@@ -22,5 +23,9 @@
   "devDependencies": {
     "jsdoc": "^3.5.5",
     "sqlite3": "^3.1.13"
-  }
+  },
+  "keywords": [
+    "task",
+    "manager"
+  ]
 }
