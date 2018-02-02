@@ -1,5 +1,5 @@
-# RethinkDB
-rethinkdb_data
+.conf.json
+.WYD.db
 
 # JSDoc
 out
@@ -9,9 +9,6 @@ documentation
 logs
 *.log
 npm-debug.log*
-
-# CSS
-/public/style/*.css
 
 # Runtime data
 pids
