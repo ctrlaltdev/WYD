@@ -49,7 +49,7 @@ class DBConnect {
     if (conf.local) {
       this.db.close((err) => {
         if (err) {
-          console.error(err.message);
+          intel.warn(err.message);
         }
         intel.info('Local DB closed');
       });
@@ -58,23 +58,60 @@ class DBConnect {
     }
   }
 
+  createDB (local=false) {
+    if (local) {
+      let query = `CREATE TABLE IF NOT EXISTS tasks (id integer PRIMARY KEY, task text NOT NULL, status integer DEFAULT 0);`;
+      this.db.run(query, (err) => {
+        if (err) { throw err; }
+      });
+    }
+    this.deconstructor();
+  }
+
   close (id) {
+    let query = `UPDATE tasks SET status = 1 WHERE id = ?;`;
+    this.db.run(query, [id], (err) => {
+      if (err) { throw err; }
+      console.log(`Task #${id} closed`);
+    });
     this.deconstructor();
   }
 
   create (task) {
+    let query = `INSERT INTO tasks (task) VALUES (?);`;
+    this.db.run(query, [task], (err) => {
+      if (err) { throw err; }
+      console.log(`Task added: ${task}`);
+    });
     this.deconstructor();
   }
 
   delete (id) {
+    let query = `DELETE FROM tasks WHERE id = ?;`;
+    this.db.run(query, [id], (err) => {
+      if (err) { throw err; }
+      console.log(`Task #${id} deleted`);
+    });
     this.deconstructor();
   }
 
   list () {
+    let query = `SELECT id, task, status FROM tasks ORDER BY id DESC LIMIT 20`;
+    this.db.each(query, (err, row) => {
+      if (err) { throw err; }
+      let status = row.status == 0 ? `OPEN` : `DONE`;
+      let line = `#${row.id} - [${status}] ${row.task}`;
+      console.log(line);
+    });
     this.deconstructor();
   }
 
   update (id, task) {
+    let query = `UPDATE tasks SET task = ? WHERE id = ?;`;
+    this.db.run(query, [task, id], (err) => {
+      if (err) { throw err; }
+      console.log(`Task #${id} updated: ${task}`);
+    });
     this.deconstructor();
   }
 
@@ -126,6 +163,8 @@ if (cmd && cmd == "set") {
         let newconf = JSON.parse(fs.readFileSync("./.conf.json", "utf8"));
         newconf.local = true;
         fs.writeFileSync("./.conf.json", JSON.stringify(newconf));
+        let DBC = new DBConnect();
+        DBC.createDB(argv.local);
         intel.info('Installation set to local');
       } catch (err) {
         intel.warn(err);
@@ -134,6 +173,8 @@ if (cmd && cmd == "set") {
       try {
         let newconf = {local: true};
         fs.writeFileSync("./.conf.json", JSON.stringify(newconf));
+        let DBC = new DBConnect();
+        DBC.createDB(argv.local);
         intel.info('Installation set to local');
       } catch (err) {
         intel.warn(err);
@@ -158,6 +199,9 @@ if (cmd && cmd == "set") {
         intel.warn(err);
       }
     }
+  } else if (argv.DB) {
+    let DBC = new DBConnect();
+    DBC.createDB(true);
   } else {
     intel.warn(`
   The option has not been recognized, consult the help to check allowed options for the command set.
@@ -177,6 +221,7 @@ if (cmd && confExist) {
       break;
 
     case "new":
+    case "add":
     case "create":
       DBC.create(argv._[1]);
       break;
@@ -217,6 +262,7 @@ if (cmd && confExist) {
         -h        Show this help
 
       COMMANDS LIST:
+        add       alias of new
         close     alias of done
         create    alias of new
         delete    delete a task
