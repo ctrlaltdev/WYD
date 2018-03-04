@@ -1,14 +1,8 @@
-.conf.json
 .WYD.db
-
-# JSDoc
-out
-documentation
 
 # Logs
 logs
 *.log
-npm-debug.log*
 
 # Runtime data
 pids
