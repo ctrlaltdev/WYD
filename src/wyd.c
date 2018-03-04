@@ -26,7 +26,6 @@ int createDB(int argc, char* argv[]) {
 	 int rc;
 	 char *sql;
 
-	 /* Open database */
 	 rc = sqlite3_open_v2("./.WYD.db", &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
 	 
 	 if( rc ) {
@@ -34,13 +33,11 @@ int createDB(int argc, char* argv[]) {
 			return(0);
 	 }
 
-	 /* Create SQL statement */
 	 sql = "CREATE TABLE TASKS("  \
-				 "ID INT PRIMARY KEY NOT NULL," \
+				 "ID INTEGER PRIMARY KEY AUTOINCREMENT," \
 				 "TASK TEXT NOT NULL," \
 				 "STATUS INT DEFAULT 0 NOT NULL);";
 
-	 /* Execute SQL statement */
 	 rc = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
 	 
 	 if( rc != SQLITE_OK ){
@@ -55,29 +52,27 @@ int createDB(int argc, char* argv[]) {
 
 int create(char* task) {
 	sqlite3 *db;
-	 char *zErrMsg = 0;
-	 int rc;
-	 char *stmt;
+	int rc;
+	sqlite3_stmt *stmt;
 
-	 rc = sqlite3_open_v2("./.WYD.db", &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
-	 
-	 if( rc ) {
-			fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-			return(0);
-	 }
+	rc = sqlite3_open_v2("./.WYD.db", &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
+	
+	if( rc ) {
+		fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+		return(0);
+	}
 
-	 stmt = "INSERT INTO TASKS (TASK) VALUES('');";
+	sqlite3_prepare_v2(db, "INSERT INTO TASKS (TASK) VALUES(?1);", -1, &stmt, NULL);
+	sqlite3_bind_text(stmt, 1, task, -1, SQLITE_STATIC);
+	rc = sqlite3_step(stmt); 
+	if (rc != SQLITE_DONE) {
+		printf("ERROR inserting data: %s\n", sqlite3_errmsg(db));
+		return 1;
+	}
 
-	 rc = sqlite3_exec(db, stmt, callback, 0, &zErrMsg);
-	 
-	 if( rc != SQLITE_OK ){
-	 fprintf(stderr, "SQL error: %s\n", zErrMsg);
-			sqlite3_free(zErrMsg);
-	 } else {
-			fprintf(stdout, "Database created\n");
-	 }
-	 sqlite3_close(db);
-	 return 0;
+	sqlite3_finalize(stmt);
+	printf("Task created.\n");
+	return 0;
 }
 
 int main(int argc, char* argv[]) {
