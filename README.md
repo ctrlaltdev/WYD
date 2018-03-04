@@ -6,12 +6,13 @@
 ## Installation
 
 ### Requirements
-* Node.js 8.9+
+* Make
+* Sqlite3
 
 ### How to install
 * Clone this repo: ```git clone https://github.com/ctrlaltdev/WYD.git```
 * Move inside the directory: ```cd WYD```
-* Install the npm packages: ```npm i``` or ```yarn install```
+* Create the executable: ```make``` then ```make install```
 * Do stuff
 * Pet a cat
 * Enjoy life
