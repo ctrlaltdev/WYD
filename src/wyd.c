@@ -248,10 +248,10 @@ void update(int id, char* task) {
 int main(int argc, char* argv[]) {
 
 	if( argc == 2 ) {
-		if ( strcmp(argv[1], "init") == 0 ) {
+		if ( strncmp(argv[1], "init", strlen("init")) == 0 ) {
 			createDB();
 		}
-		else if ( strcmp(argv[1], "list") == 0  || strcmp(argv[1], "ls") == 0 ) {
+		else if ( strncmp(argv[1], "list", strlen("list")) == 0  || strncmp(argv[1], "ls", strlen("ls")) == 0 ) {
 			list(0);
 			return 0;
 		}
@@ -261,19 +261,19 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	else if ( argc == 3 ) {
-		if ( strcmp(argv[1], "create") == 0  || strcmp(argv[1], "add") == 0 ) {
+		if ( strncmp(argv[1], "create", strlen("create")) == 0  || strncmp(argv[1], "add", strlen("add")) == 0 ) {
 			create(argv[2]);
 			return 0;
 		}
-		else if ( ( strcmp(argv[1], "list") == 0  || strcmp(argv[1], "ls") == 0 ) && strcmp(argv[2], "-a") == 0 ) {
+		else if ( ( strncmp(argv[1], "list", strlen("list")) == 0  || strncmp(argv[1], "ls", strlen("ls")) == 0 ) && strncmp(argv[2], "-a", strlen("-a")) == 0 ) {
 			list(1);
 			return 0;
 		}
-		else if ( strcmp(argv[1], "delete") == 0  || strcmp(argv[1], "rm") == 0 ) {
+		else if ( strncmp(argv[1], "delete", strlen("delete")) == 0  || strncmp(argv[1], "rm", strlen("rm")) == 0 ) {
 			delete(atoi(argv[2]));
 			return 0;
 		}
-		else if ( strcmp(argv[1], "close") == 0  || strcmp(argv[1], "done") == 0 ) {
+		else if ( strncmp(argv[1], "close", strlen("close")) == 0  || strncmp(argv[1], "done", strlen("done")) == 0 ) {
 			done(atoi(argv[2]));
 			return 0;
 		}
@@ -283,7 +283,7 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	else if ( argc == 4 ) {
-		if ( strcmp(argv[1], "update") == 0  || strcmp(argv[1], "ud") == 0 ) {
+		if ( strncmp(argv[1], "update", strlen("update")) == 0  || strncmp(argv[1], "ud", strlen("ud")) == 0 ) {
 			update(atoi(argv[2]),argv[3]);
 			return 0;
 		}
