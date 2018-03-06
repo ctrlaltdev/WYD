@@ -80,6 +80,32 @@ int create(char* task) {
 	return 0;
 }
 
+int delete(int id) {
+	sqlite3 *db;
+	int rc;
+	sqlite3_stmt *stmt;
+
+	rc = sqlite3_open_v2("./.WYD.db", &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
+	
+	if ( rc ) {
+		fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+		return(1);
+	}
+
+	sqlite3_prepare_v2(db, "DELETE FROM TASKS WHERE ID = ?1;", -1, &stmt, NULL);
+	sqlite3_bind_int(stmt, 1, id);
+	rc = sqlite3_step(stmt); 
+	if (rc != SQLITE_DONE) {
+		printf("ERROR deleting data: %s\n", sqlite3_errmsg(db));
+		return 1;
+	}
+
+	sqlite3_finalize(stmt);
+	printf("Task deleted.\n");
+	sqlite3_close(db);
+	return 0;
+}
+
 int list(int showall) {
 	sqlite3 *db;
 	int rc;
@@ -105,7 +131,7 @@ int list(int showall) {
 	while ( done == 0 ) {
 		switch (sqlite3_step (stmt)) {
 			case SQLITE_ROW:
-				id = sqlite3_column_int64(stmt, 0);
+				id = sqlite3_column_int(stmt, 0);
 				task  = sqlite3_column_text(stmt, 1);
 				printf ("#%d - %s\n", id, task);
 				break;
@@ -147,6 +173,9 @@ int main(int argc, char* argv[]) {
 		}
 		else if ( ( strcmp(argv[1], "list") == 0  || strcmp(argv[1], "ls") == 0 ) && strcmp(argv[2], "-a") == 0 ) {
 			list(1);
+		}
+		else if ( strcmp(argv[1], "delete") == 0  || strcmp(argv[1], "rm") == 0 ) {
+			delete(atoi(argv[2]));
 		}
 		else {
 			help();
