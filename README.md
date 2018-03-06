@@ -6,8 +6,10 @@
 ## Installation
 
 ### Requirements
-* Make
 * Sqlite3
+
+#### To compile from scratch
+* Make
 * Sqlite3-libs
 
 ### How to install
@@ -19,4 +21,6 @@
 * Enjoy life
 
 ### TO DO
+* [x] Make a working version!
+* [ ] Put colors in those tasks
 * [ ] Everything else!

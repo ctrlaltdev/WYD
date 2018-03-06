@@ -12,4 +12,4 @@ install:
 
 .PHONY: clean
 clean:
-	sudo rm -f /usr/bin/wyd wyd ./.WYD.db
+	sudo rm -f /usr/bin/wyd wyd ~/.WYD.db

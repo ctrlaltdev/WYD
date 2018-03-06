@@ -22,45 +22,56 @@ void help() {
 }
 
 static int callback(void *NotUsed, int argc, char **argv, char **azColName) {
-	 int i;
-	 for(i = 0; i<argc; i++) {
-			printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
-	 }
-	 printf("\n");
-	 return 0;
+	int i;
+	for(i = 0; i<argc; i++) {
+		printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+	}
+	printf("\n");
+	return 0;
 }
 
 int createDB() {
-	 sqlite3 *db;
-	 char *zErrMsg = 0;
-	 int rc;
-	 char *sql;
+	char *DBfile;
+	char *file = "/.WYD.db";
+	DBfile = malloc(strlen(getenv("HOME") + strlen(file) + 1));
+	strcpy(DBfile, getenv("HOME"));
+	strcat(DBfile, file);
+	sqlite3 *db;
+	char *zErrMsg = 0;
+	int rc;
+	char *sql;
 
-	 rc = sqlite3_open_v2("./.WYD.db", &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
-	 
-	 if( rc ) {
-			fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-			return(0);
-	 }
+	rc = sqlite3_open_v2(DBfile, &db, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, NULL);
+	
+	if( rc ) {
+		fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+		return(0);
+	}
 
-	 sql = "CREATE TABLE TASKS("  \
-				 "ID INTEGER PRIMARY KEY AUTOINCREMENT," \
-				 "TASK TEXT NOT NULL," \
-				 "STATUS INT DEFAULT 0 NOT NULL);";
+	sql = "CREATE TABLE TASKS("  \
+				"ID INTEGER PRIMARY KEY AUTOINCREMENT," \
+				"TASK TEXT NOT NULL," \
+				"STATUS INT DEFAULT 0 NOT NULL);";
 
-	 rc = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
-	 
-	 if( rc != SQLITE_OK ){
-	 fprintf(stderr, "SQL error: %s\n", zErrMsg);
-			sqlite3_free(zErrMsg);
-	 } else {
-			fprintf(stdout, "What You Doin\' initialized\n");
-	 }
-	 sqlite3_close(db);
-	 return 0;
+	rc = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
+	
+	if( rc != SQLITE_OK ){
+	fprintf(stderr, "SQL error: %s\n", zErrMsg);
+		sqlite3_free(zErrMsg);
+	} else {
+		fprintf(stdout, "What You Doin\' initialized\n");
+	}
+	sqlite3_close(db);
+	free(DBfile);
+	return 0;
 }
 
 void list(int showall) {
+	char *DBfile;
+	char *file = "/.WYD.db";
+	DBfile = malloc(strlen(getenv("HOME") + strlen(file) + 1));
+	strcpy(DBfile, getenv("HOME"));
+	strcat(DBfile, file);
 	sqlite3 *db;
 	int rc;
 	int id;
@@ -68,7 +79,7 @@ void list(int showall) {
 	int status;
 	sqlite3_stmt *stmt;
 
-	rc = sqlite3_open_v2("./.WYD.db", &db, SQLITE_OPEN_READONLY, NULL);
+	rc = sqlite3_open_v2(DBfile, &db, SQLITE_OPEN_READONLY, NULL);
 	
 	if ( rc ) {
 		fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
@@ -114,14 +125,20 @@ void list(int showall) {
 
 	sqlite3_finalize(stmt);
 	sqlite3_close(db);
+	free(DBfile);
 }
 
 void create(char* task) {
+	char *DBfile;
+	char *file = "/.WYD.db";
+	DBfile = malloc(strlen(getenv("HOME") + strlen(file) + 1));
+	strcpy(DBfile, getenv("HOME"));
+	strcat(DBfile, file);
 	sqlite3 *db;
 	int rc;
 	sqlite3_stmt *stmt;
 
-	rc = sqlite3_open_v2("./.WYD.db", &db, SQLITE_OPEN_READWRITE, NULL);
+	rc = sqlite3_open_v2(DBfile, &db, SQLITE_OPEN_READWRITE, NULL);
 	
 	if ( rc ) {
 		fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
@@ -136,15 +153,21 @@ void create(char* task) {
 
 	sqlite3_finalize(stmt);
 	sqlite3_close(db);
+	free(DBfile);
 	list(0);
 }
 
 void delete(int id) {
+	char *DBfile;
+	char *file = "/.WYD.db";
+	DBfile = malloc(strlen(getenv("HOME") + strlen(file) + 1));
+	strcpy(DBfile, getenv("HOME"));
+	strcat(DBfile, file);
 	sqlite3 *db;
 	int rc;
 	sqlite3_stmt *stmt;
 
-	rc = sqlite3_open_v2("./.WYD.db", &db, SQLITE_OPEN_READWRITE, NULL);
+	rc = sqlite3_open_v2(DBfile, &db, SQLITE_OPEN_READWRITE, NULL);
 	
 	if ( rc ) {
 		fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
@@ -159,15 +182,21 @@ void delete(int id) {
 
 	sqlite3_finalize(stmt);
 	sqlite3_close(db);
+	free(DBfile);
 	list(0);
 }
 
 void done(int id) {
+	char *DBfile;
+	char *file = "/.WYD.db";
+	DBfile = malloc(strlen(getenv("HOME") + strlen(file) + 1));
+	strcpy(DBfile, getenv("HOME"));
+	strcat(DBfile, file);
 	sqlite3 *db;
 	int rc;
 	sqlite3_stmt *stmt;
 
-	rc = sqlite3_open_v2("./.WYD.db", &db, SQLITE_OPEN_READWRITE, NULL);
+	rc = sqlite3_open_v2(DBfile, &db, SQLITE_OPEN_READWRITE, NULL);
 	
 	if ( rc ) {
 		fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
@@ -182,15 +211,21 @@ void done(int id) {
 
 	sqlite3_finalize(stmt);
 	sqlite3_close(db);
+	free(DBfile);
 	list(0);
 }
 
 void update(int id, char* task) {
+	char *DBfile;
+	char *file = "/.WYD.db";
+	DBfile = malloc(strlen(getenv("HOME") + strlen(file) + 1));
+	strcpy(DBfile, getenv("HOME"));
+	strcat(DBfile, file);
 	sqlite3 *db;
 	int rc;
 	sqlite3_stmt *stmt;
 
-	rc = sqlite3_open_v2("./.WYD.db", &db, SQLITE_OPEN_READWRITE, NULL);
+	rc = sqlite3_open_v2(DBfile, &db, SQLITE_OPEN_READWRITE, NULL);
 	
 	if ( rc ) {
 		fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
@@ -206,6 +241,7 @@ void update(int id, char* task) {
 
 	sqlite3_finalize(stmt);
 	sqlite3_close(db);
+	free(DBfile);
 	list(0);
 }
 
