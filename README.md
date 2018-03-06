@@ -8,6 +8,7 @@
 ### Requirements
 * Make
 * Sqlite3
+* Sqlite3-libs
 
 ### How to install
 * Clone this repo: ```git clone https://github.com/ctrlaltdev/WYD.git```
