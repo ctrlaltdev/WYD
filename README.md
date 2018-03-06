@@ -2,6 +2,9 @@
 [![I love badges](https://img.shields.io/badge/I%20love-badges-FF00FF.svg?style=flat-square)](https://shields.io)
 
 # What you doin'?
+WYD is a simple CLI task manager.
+
+You can add tasks, update them and mark them as done. Simple, but often enough. 
 
 ## Installation
 
