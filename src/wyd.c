@@ -313,7 +313,7 @@ int main(int argc, char* argv[]) {
     char *task = NULL;
     if (argc >= 3) {
       if (sscanf(argv[2], "%d", &id)) {
-        // if sscanf returned > 0 it must have out a valid decimal number in 'id'
+        // if sscanf returned > 0 it must have put a valid decimal number in 'id'
         if (argc >= 4)
           // there should be a text string following
           task = argv[3];
