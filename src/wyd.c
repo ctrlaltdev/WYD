@@ -3,24 +3,6 @@
 #include <string.h>
 #include <sqlite3.h>
 
-void help() {
-	fprintf(stdout, "usage: wyd command\n" \
-	"	commands:\n" \
-	"		add \"Task\"		alias of create\n" \
-	"		close ID		mark a task as done\n" \
-	"		create \"Task\"		create a task\n" \
-	"		delete ID		delete a task\n" \
-	"		done ID			alias of close\n" \
-	"		init			create the database\n" \
-	"		list [options]		list the open tasks\n" \
-	"			-a		list all tasks\n" \
-	"		ls			alias of list\n" \
-	"		rm ID			alias of delete\n" \
-	"		ud ID \"Task\"		alias of update\n" \
-	"		update ID \"Task\"	update task content\n" \
-	);
-}
-
 static int callback(void *NotUsed, int argc, char **argv, char **azColName) {
 	int i;
 	for(i = 0; i<argc; i++) {
@@ -35,6 +17,8 @@ static char *DBfile = NULL;
 static const char* const filename = "/.WYD.db";
 static sqlite3 *db;
 
+// an unused option passed to list() instead of "-a" to avoid seg faults on NULL
+static char* const unused = "unused";
 
 struct sSQLstatement {
   const char *statement;
@@ -101,7 +85,7 @@ out:
 
 
 
-int createDB() {
+int createDB(int unused) {
 	char *zErrMsg = 0;
 	int rc;
 
@@ -121,7 +105,7 @@ int createDB() {
 	return rc;
 }
 
-int list(int showall) {
+int list(char *option) {
 	int rc;
 	int id;
 	const unsigned char* task;
@@ -136,7 +120,7 @@ int list(int showall) {
     goto out;
 	}
 
-	if (showall)
+	if (strncmp(option, "-a", 2) == 0)
     s = TASKS_SHOW_ALL;
 
   sqlite3_prepare_v2(db, SQLstatements[s].statement, -1, &stmt, NULL);
@@ -145,7 +129,7 @@ int list(int showall) {
 	while (!done ) {
 		switch (sqlite3_step (stmt)) {
 			case SQLITE_ROW:
-				if ( showall == 1 ) {
+				if ( s == TASKS_SHOW_ALL ) {
 					id = sqlite3_column_int(stmt, 0);
 					task  = sqlite3_column_text(stmt, 1);
 					status = sqlite3_column_int(stmt, 2);
@@ -199,7 +183,7 @@ int create(char* task) {
 
 	sqlite3_finalize(stmt);
 	sqlite3_close(db);
-	list(0);
+	list(unused);
 out:
   return rc;
 }
@@ -224,12 +208,12 @@ int delete(int id) {
 
 	sqlite3_finalize(stmt);
 	sqlite3_close(db);
-	list(0);
+	list(unused);
 out:
   return rc;
 }
 
-void done(int id) {
+int done(int id) {
 	int rc;
 	sqlite3_stmt *stmt;
 
@@ -237,6 +221,7 @@ void done(int id) {
 	
 	if ( rc ) {
 		fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+    goto out;
 	}
 
 	sqlite3_prepare_v2(db, SQLstatements[TASK_DONE].statement, -1, &stmt, NULL);
@@ -248,10 +233,13 @@ void done(int id) {
 
 	sqlite3_finalize(stmt);
 	sqlite3_close(db);
-	list(0);
+	list(unused);
+
+out:
+  return rc;
 }
 
-void update(int id, char* task) {
+int update(int id, char* task) {
 	int rc;
 	sqlite3_stmt *stmt;
 
@@ -259,6 +247,7 @@ void update(int id, char* task) {
 	
 	if ( rc ) {
 		fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+    goto out;
 	}
 
 	sqlite3_prepare_v2(db, SQLstatements[TASK_UPDATE].statement, -1, &stmt, NULL);
@@ -271,59 +260,86 @@ void update(int id, char* task) {
 
 	sqlite3_finalize(stmt);
 	sqlite3_close(db);
-	list(0);
+	list(unused);
+
+out:
+  return rc;
 }
 
-int main(int argc, char* argv[]) {
+struct sOptions {
+  const char* const name;
+  const char* const alias;
+  int (*func_int)(int);
+  int (*func_str)(char *);
+  int (*func_int_str)(int, char *);
+  const char* const help;
+};
 
-	if( argc == 2 ) {
-		if ( strcmp(argv[1], "init") == 0 ) {
-			createDB();
-		}
-		else if ( strcmp(argv[1], "list") == 0  || strcmp(argv[1], "ls") == 0 ) {
-			list(0);
-			return 0;
-		}
-		else {
-			help();
-			return 0;
-		}
-	}
-	else if ( argc == 3 ) {
-		if ( strcmp(argv[1], "create") == 0  || strcmp(argv[1], "add") == 0 ) {
-			create(argv[2]);
-			return 0;
-		}
-		else if ( ( strcmp(argv[1], "list") == 0  || strcmp(argv[1], "ls") == 0 ) && strcmp(argv[2], "-a") == 0 ) {
-			list(1);
-			return 0;
-		}
-		else if ( strcmp(argv[1], "delete") == 0  || strcmp(argv[1], "rm") == 0 ) {
-			delete(atoi(argv[2]));
-			return 0;
-		}
-		else if ( strcmp(argv[1], "close") == 0  || strcmp(argv[1], "done") == 0 ) {
-			done(atoi(argv[2]));
-			return 0;
-		}
-		else {
-			help();
-			return 0;
-		}
-	}
-	else if ( argc == 4 ) {
-		if ( strcmp(argv[1], "update") == 0  || strcmp(argv[1], "ud") == 0 ) {
-			update(atoi(argv[2]),argv[3]);
-			return 0;
-		}
-		else {
-			help();
-			return 0;
-		}
-	}
-	else {
-		printf("No command detected.\n");
-		help();
-		return 0;
-	}
+static struct sOptions options[] = {
+  { "init",   NULL,   createDB, NULL,   NULL,   "\t\tCreate database"             },
+  { "create", "add",  NULL,     create, NULL,   "\"Task\"\t\tNew task"            },
+  { "update", "up",   NULL,     NULL,   update, "ID \"Task\" Update task content" },
+  { "delete", "rm",   delete,   NULL,   NULL,   "ID\t\tDelete task"               },
+  { "close",  "done", done,     NULL,   NULL,   "ID\t\tMark task done"            },
+  { "list",   "ls",   NULL,     list,   NULL,   "[-a]\t\tList open or all tasks"  },
+  { NULL,     NULL,   NULL,     NULL,   NULL,   NULL                              },
+};
+
+void help() {
+	fprintf(stdout, "%s",
+"usage: wyd command\n"
+"\tcommand\t [alias]\thelp\n");
+
+  struct sOptions *opt = &options[0];
+  while (opt->name) {
+    fprintf(stdout, "\t%s %s%s%s %s\n",
+        opt->name,
+        opt->alias ? "[" : "",
+        opt->alias ? opt->alias : "",
+        opt->alias ? "]" : "",
+        opt->help ? opt->help : ""
+        );
+    opt++;
+  }
+}
+
+
+int main(int argc, char* argv[]) {
+  int ret = 0;
+
+  if (argc >= 2) {
+    // set default known values
+    int id = -1;
+    char *task = NULL;
+    if (argc >= 3) {
+      if (sscanf(argv[2], "%d", &id)) {
+        // if sscanf returned > 0 it must have out a valid decimal number in 'id'
+        if (argc >= 4)
+          // there should be a text string following
+          task = argv[3];
+      } else {
+        // first argument not a number
+        task = argv[2];
+      }
+    }
+
+    struct sOptions *opt = &options[0];
+    while (opt->name) {
+      if (strncmp(opt->name, argv[1], strlen(opt->name)) == 0 ||
+          ( opt->alias && strncmp(opt->alias, argv[1], strlen(opt->alias)) == 0)) {
+        if (argc >= 4 && opt->func_int_str && task)
+         ret = opt->func_int_str(id, task);
+        else if (argc >= 2 && argc <= 3 && opt->func_str && id < 0) {
+          if (!task)
+            task = (char *)opt->name; // task just needs to be non-null and this is the easiest way!
+          ret = opt->func_str(task);
+        } else if (argc >= 2 && argc <= 3 && opt->func_int)
+          ret = opt->func_int(id);
+        }
+      opt++;
+    }
+  } else
+    help();
+
+  return ret;
 }
