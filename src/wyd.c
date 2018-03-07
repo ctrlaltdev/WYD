@@ -288,15 +288,14 @@ static struct sOptions options[] = {
 void help() {
 	fprintf(stdout, "%s",
 "usage: wyd command\n"
-"\tcommand\t [alias]\thelp\n");
+"\tcommand\t | alias\thelp\n");
 
   struct sOptions *opt = &options[0];
   while (opt->name) {
-    fprintf(stdout, "\t%s %s%s%s %s\n",
+    fprintf(stdout, "\t%s %s%s %s\n",
         opt->name,
-        opt->alias ? "[" : "",
+        opt->alias ? "| " : "",
         opt->alias ? opt->alias : "",
-        opt->alias ? "]" : "",
         opt->help ? opt->help : ""
         );
     opt++;
