@@ -331,7 +331,7 @@ int main(int argc, char* argv[]) {
          ret = opt->func_int_str(id, task);
         else if (argc >= 2 && argc <= 3 && opt->func_str && id < 0) {
           if (!task)
-            task = (char *)opt->name; // task just needs to be non-null and this is the easiest way!
+            task = (char *)unused; // task just needs to be non-null and this is the easiest way!
           ret = opt->func_str(task);
         } else if (argc >= 2 && argc <= 3 && opt->func_int)
           ret = opt->func_int(id);
