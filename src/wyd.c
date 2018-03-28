@@ -35,7 +35,6 @@ static char *DBfile = NULL;
 static const char* const filename = "/.WYD.db";
 static sqlite3 *db;
 
-
 struct sSQLstatement {
   const char *statement;
 };
@@ -98,8 +97,6 @@ int open_database(int flags)
 out:
   return ret;
 }
-
-
 
 int createDB() {
 	char *zErrMsg = 0;

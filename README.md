@@ -7,18 +7,16 @@ WYD is a simple CLI task manager.
 You can add tasks, update them and mark them as done. Simple, but often enough. 
 
 ## Installation
-
 ### Requirements
-* Sqlite3
-
-#### To compile from scratch
 * Make
-* Sqlite3-libs
+* Sqlite3
+* Sqlite3-libs / Sqlite3-devel
 
 ### How to install
 * Clone this repo: ```git clone https://github.com/ctrlaltdev/WYD.git```
 * Move inside the directory: ```cd WYD```
 * Create the executable: ```make``` then ```make install```
+* Use the command `wyd`
 * Do stuff
 * Pet a cat
 * Enjoy life
@@ -27,3 +25,4 @@ You can add tasks, update them and mark them as done. Simple, but often enough.
 * [x] Make a working version!
 * [ ] Put colors in those tasks
 * [ ] Everything else!
+
