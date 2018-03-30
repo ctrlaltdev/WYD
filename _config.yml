@@ -2,7 +2,7 @@ remote_theme: ctrlaltdev/ctrlaltdev-theme
 theme_settings:
   title: "WYD"
   description: "What you doin'?"
-  
+github: "ctrlaltdev/WYD"
 sass:
   sass_dir: _sass
-style: :compressed
+  style: :compressed
