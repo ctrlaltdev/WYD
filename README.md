@@ -1,5 +1,6 @@
-[![Issues](https://img.shields.io/github/issues/ctrlaltdev/WYD.svg?style=flat-square)](https://github.com/ctrlaltdev/WYD/issues)
-[![I love badges](https://img.shields.io/badge/I%20love-badges-FF00FF.svg?style=flat-square)](https://shields.io)
+[![GitHub release](https://img.shields.io/github/release/ctrlaltdev/WYD.svg?style=for-the-badge)](https://github.com/ctrlaltdev/WYD/releases)
+[![licence](https://img.shields.io/github/license/ctrlaltdev/WYD.svg?style=for-the-badge)](https://github.com/ctrlaltdev/WYD/blob/master/LICENCE.md)
+![C](https://img.shields.io/badge/_-C-888.svg?style=for-the-badge)
 
 # What you doin'?
 WYD is a simple CLI task manager.
